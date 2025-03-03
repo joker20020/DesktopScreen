@@ -1,6 +1,7 @@
 {
     "idf.pythonInstallPath": "/usr/bin/python3",
     "files.associations": {
-        "sdkconfig.h": "c"
+        "sdkconfig.h": "c",
+        "ds_screen.h": "c"
     }
 }
