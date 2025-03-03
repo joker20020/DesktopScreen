@@ -11,7 +11,6 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
-#include "driver/periph_ctrl.h"
 #include "driver/gptimer.h"
 
 #include "ds_timer.h"
@@ -20,9 +19,7 @@
 #include "ds_ui_timepage.h"
 #include "ds_ui_tomatopage.h"
 
-#define TIMER_DIVIDER         16  //  Hardware timer clock divider
-#define TIMER_SCALE           (TIMER_BASE_CLK / TIMER_DIVIDER/1000)  // convert counter value to ms seconds
-#define TIMER_INTERVAL0_SEC   (10) // sample test interval for the first timer
+#define TIMER_ALARM_SEC   (1) // sample test interval for the first timer
 #define TEST_WITH_RELOAD      1        // testing will be done with auto reload
 
 /*
@@ -32,13 +29,14 @@
 typedef struct {
     uint64_t timer_minute_count;
     uint64_t timer_second_count;
-    uint64_t timer_second_count_isr;
 } timer_event_t;
 
 timer_event_t g_timer_event;
 
 QueueHandle_t timer_queue;
 QueueHandle_t ui_update_timer_queue;
+
+gptimer_handle_t gptimer;
 
 /*
  * Timer group0 ISR handler
@@ -48,31 +46,28 @@ QueueHandle_t ui_update_timer_queue;
  * If we're okay with the timer irq not being serviced while SPI flash cache is disabled,
  * we can allocate this interrupt without the ESP_INTR_FLAG_IRAM flag and use the normal API.
  */
-void IRAM_ATTR timer_group0_isr(void *para)
+static bool IRAM_ATTR timer_group0_isr(gptimer_handle_t timer, const gptimer_alarm_event_data_t *edata, void *user_data)
 {
-    // timer_spinlock_take(TIMER_GROUP_0);
-    int timer_idx = (int) para;
 
+    BaseType_t high_task_awoken = pdFALSE;
     // /* Prepare basic event data
     //    that will be then sent back to the main program task */
     timer_event_t evt;
 
-    timer_group_clr_intr_status_in_isr(TIMER_GROUP_0, TIMER_0);
+    // timer_group_clr_intr_status_in_isr(TIMER_GROUP_0, TIMER_0);
 
     /* After the alarm has been triggered
       we need enable it again, so it is triggered the next time */
-    timer_group_enable_alarm_in_isr(TIMER_GROUP_0, timer_idx);
+    // timer_group_enable_alarm_in_isr(TIMER_GROUP_0, timer_idx);
 
     /* Now just send the event data back to the main program task */
-    g_timer_event.timer_second_count_isr ++;
+    g_timer_event.timer_second_count ++;
     //1s计算一次 
-    if(g_timer_event.timer_second_count_isr >= 100){
-        g_timer_event.timer_second_count_isr = 0;
-        update_system_time_second();
-    }
+    update_system_time_second();
     xQueueSendFromISR(timer_queue, &evt, NULL);
     xQueueSendFromISR(ui_update_timer_queue, &evt, NULL);
-    // timer_spinlock_give(TIMER_GROUP_0);
+    // return whether we need to yield at the end of ISR
+    return (high_task_awoken == pdTRUE);
 }
 
 /*
@@ -82,30 +77,31 @@ void IRAM_ATTR timer_group0_isr(void *para)
  * auto_reload - should the timer auto reload on alarm?
  * timer_interval_sec - the interval of alarm to set
  */
-static void tg0_timer_init(int timer_idx,
-                                   bool auto_reload, double timer_interval_sec)
+static void tg0_timer_init(bool auto_reload, double timer_alarm_count)
 {
     /* Select and initialize basic parameters of the timer */
-    timer_config_t config = {
-        .divider = TIMER_DIVIDER,
-        .counter_dir = TIMER_COUNT_UP,
-        .counter_en = TIMER_PAUSE,
-        .alarm_en = TIMER_ALARM_EN,
-        .auto_reload = auto_reload,
+    gptimer_config_t timer_config = {
+        .clk_src = GPTIMER_CLK_SRC_DEFAULT,
+        .direction = GPTIMER_COUNT_UP,
+        .resolution_hz = 1000000, // 1MHz, 1 tick=1us
     }; // default clock source is APB
-    timer_init(TIMER_GROUP_0, timer_idx, &config);
+    ESP_ERROR_CHECK(gptimer_new_timer(&timer_config, &gptimer));
+    
+    gptimer_event_callbacks_t cbs = {
+        .on_alarm = timer_group0_isr,
+    };
+    ESP_ERROR_CHECK(gptimer_register_event_callbacks(gptimer, &cbs, &timer_queue));
 
-    /* Timer's counter will initially start from value below.
-       Also, if auto_reload is set, this value will be automatically reload on alarm */
-    timer_set_counter_value(TIMER_GROUP_0, timer_idx, 0x00000000ULL);
+    
+    ESP_ERROR_CHECK(gptimer_enable(gptimer));
 
-    /* Configure the alarm value and the interrupt on alarm. */
-    timer_set_alarm_value(TIMER_GROUP_0, timer_idx, timer_interval_sec * TIMER_SCALE);
-    timer_enable_intr(TIMER_GROUP_0, timer_idx);
-    timer_isr_register(TIMER_GROUP_0, timer_idx, timer_group0_isr,
-                       (void *) timer_idx, ESP_INTR_FLAG_IRAM, NULL);
-
-    timer_start(TIMER_GROUP_0, timer_idx);
+    gptimer_alarm_config_t alarm_config = {
+        .reload_count = 0,
+        .alarm_count = timer_alarm_count * 1000000, // period = 1s
+        .flags.auto_reload_on_alarm = auto_reload,
+    };
+    ESP_ERROR_CHECK(gptimer_set_alarm_action(gptimer, &alarm_config));
+    ESP_ERROR_CHECK(gptimer_start(gptimer));
 }
 
 /*
@@ -160,10 +156,9 @@ void ds_timer_init(void)
 {
     g_timer_event.timer_minute_count = 0;
     g_timer_event.timer_second_count = 0;
-    g_timer_event.timer_second_count_isr = 0;
     timer_queue = xQueueCreate(10, sizeof(timer_event_t));
     ui_update_timer_queue = xQueueCreate(10, sizeof(timer_event_t));
-    tg0_timer_init(TIMER_0, TEST_WITH_RELOAD, TIMER_INTERVAL0_SEC);
+    tg0_timer_init(TEST_WITH_RELOAD, TIMER_ALARM_SEC);
     xTaskCreate(timer_evt_task, "timer_evt_task", 2048, NULL, 5, NULL);
     xTaskCreate(ui_timer_update_task, "ui_timer_update_task", 2048, NULL, 5, NULL);
 }

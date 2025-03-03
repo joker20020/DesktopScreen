@@ -12,6 +12,18 @@ idf_component_register(
                                 "src/hal/ds_spi.c"
                                 "src/hal/ds_pwm.c"
 
+                                "src/fs/ds_spiffs.c"
+
+                                "src/ds_system_data.c"
+
+                                "src/data/ds_data_weather.c"
+                                "src/data/ds_data_num.c"
+                                "src/data/ds_data_icon.c"
+                                "src/data/ds_data_page.c"
+
+                                "src/draw/ds_font.c"
+                                "src/draw/ds_paint.c"
+
                         INCLUDE_DIRS 
                                 "."
                                 "./include"

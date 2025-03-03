@@ -11,7 +11,7 @@
 #include "sdkconfig.h"
 #include "freertos/queue.h"
 #include "esp_types.h"
-#include "driver/periph_ctrl.h"
+// #include "driver/periph_ctrl.h"
 #include "esp_log.h"
 
 

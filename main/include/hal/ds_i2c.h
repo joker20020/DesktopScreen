@@ -1,14 +1,15 @@
 #ifndef _DS_I2C_H_
 #define _DS_I2C_H_
 
-#include "driver/i2c.h"
+#include "driver/i2c_master.h"
 
-#define _I2C_NUMBER(num) I2C_NUM_##num
-#define I2C_NUMBER(num) _I2C_NUMBER(num)
+
+#define PORT_NUMBER -1
+#define DATA_LENGTH 100
 
 #define I2C_MASTER_SCL_IO CONFIG_I2C_MASTER_SCL               /*!< gpio number for I2C master clock */
 #define I2C_MASTER_SDA_IO CONFIG_I2C_MASTER_SDA               /*!< gpio number for I2C master data  */
-#define I2C_MASTER_NUM I2C_NUMBER(CONFIG_I2C_MASTER_PORT_NUM) /*!< I2C port number for master dev */
+#define I2C_MASTER_NUM CONFIG_I2C_MASTER_PORT_NUM /*!< I2C port number for master dev */
 #define I2C_MASTER_FREQ_HZ CONFIG_I2C_MASTER_FREQUENCY        /*!< I2C master clock frequency */
 #define I2C_MASTER_TX_BUF_DISABLE 0                           /*!< I2C master doesn't need buffer */
 #define I2C_MASTER_RX_BUF_DISABLE 0                           /*!< I2C master doesn't need buffer */
@@ -22,11 +23,11 @@
 #define ACK_VAL 0x0                             /*!< I2C ack value */
 #define NACK_VAL 0x1                            /*!< I2C nack value */
 
-esp_err_t i2c_master_write_slave(uint8_t u8Cmd, uint8_t *data_wr, size_t size);
+void i2c_master_write_slave(uint8_t u8Cmd, uint8_t *data_wr, size_t size);
 
-esp_err_t i2c_master_read_slave(uint8_t u8Cmd, uint8_t *data_rd, size_t size);
+void i2c_master_read_slave(uint8_t u8Cmd, uint8_t *data_rd, size_t size);
 
-esp_err_t i2c_master_init(void);
+void i2c_master_init(void);
 
 #endif
 

@@ -1,6 +1,8 @@
 
 #include <string.h>
 #include <stdio.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 #include "ds_ft6336.h"
 #include "ds_i2c.h"
