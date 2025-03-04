@@ -46,8 +46,12 @@ idf_component_register(
                                 "./include/ui"
                                
 
-                        EMBED_FILES
+                        EMBED_FILES 
+                                "favicon.ico"
+                                "setting.html"
                                 
                         EMBED_TXTFILES
+                                "server_root_cert.pem"
+                                "server_root_cert_bilibili.pem"
                                 
                         )

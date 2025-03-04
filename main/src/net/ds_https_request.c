@@ -43,16 +43,16 @@
 #include "esp_tls.h"
 
 
-#define WEB_SERVER "api.seniverse.com"
-#define WEB_URL "https://api.seniverse.com/v3/weather/now.json?key=SmazqPcltzTft-X3v&location=guangzhou&language=zh-Hans&unit=c"
+#define WEB_API_SERVER "api.seniverse.com"
+#define WEB_API_URL "https://api.seniverse.com/v3/weather/now.json?key=SmazqPcltzTft-X3v&location=guangzhou&language=zh-Hans&unit=c"
 
 #define WEB_BILIBILI_SERVER "api.bilibili.com"
 #define WEB_BILIBILI_URL "https://api.bilibili.com/x/relation/stat?vmid=383943678&jsonp=jsonp"
 
 static const char *TAG = "example";
 
-static const char *REQUEST = "GET " WEB_URL " HTTP/1.0\r\n"
-    "Host: "WEB_SERVER"\r\n"
+static const char *REQUEST = "GET " WEB_API_URL " HTTP/1.0\r\n"
+    "Host: "WEB_API_SERVER"\r\n"
     "User-Agent: esp-idf/1.0 esp32\r\n"
     "\r\n";
 
@@ -82,29 +82,60 @@ static void https_get_task(void *pvParameters)
     char buf[512];
     int ret, len;
     int flags = 1;
+    struct esp_tls *tls;
+    esp_tls_cfg_t api_cfg = {
+        .cacert_buf  = server_root_cert_pem_start,
+        .cacert_bytes = server_root_cert_pem_end - server_root_cert_pem_start,
+    };
+    esp_tls_cfg_t bilibili_cfg = {
+        .cacert_buf  = server_root_cert_bilibili_pem_start,
+        .cacert_bytes = server_root_cert_bilibili_pem_end - server_root_cert_bilibili_pem_start,
+    };
+
+    tls = esp_tls_init();
+    if (!tls) {
+        ESP_LOGE(TAG, "Failed to allocate esp_tls handle!");
+        goto exit;
+    }
+
     while(1) {
-        esp_tls_cfg_t cfg = {
-            .cacert_buf  = server_root_cert_pem_start,
-            .cacert_bytes = server_root_cert_pem_end - server_root_cert_pem_start,
-        };
-        esp_tls_cfg_t bilibili_cfg = {
-            .cacert_buf  = server_root_cert_bilibili_pem_start,
-            .cacert_bytes = server_root_cert_bilibili_pem_end - server_root_cert_bilibili_pem_start,
-        };
-        struct esp_tls *tls;
         if(flags == 0){
-            tls = esp_tls_conn_http_new(WEB_URL, &cfg);
-        }else{
-            tls = esp_tls_conn_http_new(WEB_BILIBILI_URL, &bilibili_cfg);
+            // tls = esp_tls_conn_http_new(WEB_URL, &cfg);
+            if (esp_tls_conn_http_new_sync(WEB_API_URL, &api_cfg, tls) == 1) {
+                ESP_LOGI(TAG, "Connection established...");
+            } 
+            else {
+                ESP_LOGE(TAG, "Connection failed...");
+                int esp_tls_code = 0, esp_tls_flags = 0;
+                esp_tls_error_handle_t tls_e = NULL;
+                esp_tls_get_error_handle(tls, &tls_e);
+                /* Try to get TLS stack level error and certificate failure flags, if any */
+                ret = esp_tls_get_and_clear_last_error(tls_e, &esp_tls_code, &esp_tls_flags);
+                if (ret == ESP_OK) {
+                    ESP_LOGE(TAG, "TLS error = -0x%x, TLS flags = -0x%x", esp_tls_code, esp_tls_flags);
+                }
+                goto cleanup;
+            }
+        }
+        else{
+            // tls = esp_tls_conn_http_new(WEB_BILIBILI_URL, &bilibili_cfg);
+            if (esp_tls_conn_http_new_sync(WEB_BILIBILI_URL, &bilibili_cfg, tls) == 1) {
+                ESP_LOGI(TAG, "Connection established...");
+            } 
+            else {
+                ESP_LOGE(TAG, "Connection failed...");
+                int esp_tls_code = 0, esp_tls_flags = 0;
+                esp_tls_error_handle_t tls_e = NULL;
+                esp_tls_get_error_handle(tls, &tls_e);
+                /* Try to get TLS stack level error and certificate failure flags, if any */
+                ret = esp_tls_get_and_clear_last_error(tls_e, &esp_tls_code, &esp_tls_flags);
+                if (ret == ESP_OK) {
+                    ESP_LOGE(TAG, "TLS error = -0x%x, TLS flags = -0x%x", esp_tls_code, esp_tls_flags);
+                }
+                goto cleanup;
+            }
         }
 
-        
-        if(tls != NULL) {
-            ESP_LOGI(TAG, "Connection established...");
-        } else {
-            ESP_LOGE(TAG, "Connection failed...");
-            goto exit;
-        }
         
         size_t written_bytes = 0;
 
@@ -119,7 +150,7 @@ static void https_get_task(void *pvParameters)
                 written_bytes += ret;
             } else if (ret != ESP_TLS_ERR_SSL_WANT_READ  && ret != ESP_TLS_ERR_SSL_WANT_WRITE) {
                 ESP_LOGE(TAG, "esp_tls_conn_write  returned 0x%x", ret);
-                goto exit;
+                goto cleanup;
             }
             } while(written_bytes < strlen(REQUEST));
         }else{
@@ -133,32 +164,26 @@ static void https_get_task(void *pvParameters)
                 written_bytes += ret;
             } else if (ret != ESP_TLS_ERR_SSL_WANT_READ  && ret != ESP_TLS_ERR_SSL_WANT_WRITE) {
                 ESP_LOGE(TAG, "esp_tls_conn_write  returned 0x%x", ret);
-                goto exit;
+                goto cleanup;
             }
             } while(written_bytes < strlen(REQUEST_BILIBILI));   
         }
 
-        
 
         ESP_LOGI(TAG, "Reading HTTP response...");
 
         do
         {
             len = sizeof(buf) - 1;
-            bzero(buf, sizeof(buf));
+            memset(buf, 0x00, sizeof(buf));
             ret = esp_tls_conn_read(tls, (char *)buf, len);
             
-            if(ret == ESP_TLS_ERR_SSL_WANT_WRITE  || ret == ESP_TLS_ERR_SSL_WANT_READ)
+            if (ret == ESP_TLS_ERR_SSL_WANT_WRITE  || ret == ESP_TLS_ERR_SSL_WANT_READ) {
                 continue;
-            
-            if(ret < 0)
-           {
-                ESP_LOGE(TAG, "esp_tls_conn_read  returned -0x%x", -ret);
+            } else if (ret < 0) {
+                ESP_LOGE(TAG, "esp_tls_conn_read  returned [-0x%02X](%s)", -ret, esp_err_to_name(ret));
                 break;
-            }
-
-            if(ret == 0)
-            {
+            } else if (ret == 0) {
                 ESP_LOGI(TAG, "connection closed");
                 break;
             }
@@ -169,21 +194,18 @@ static void https_get_task(void *pvParameters)
             for(int i = 0; i < len; i++) {
                 putchar(buf[i]);
             }
+            putchar('\n'); // JSON output doesn't have a newline at end
         } while(1);
-
-    exit:
-        esp_tls_conn_delete(tls);    
-        putchar('\n'); // JSON output doesn't have a newline at end
-
-        static int request_count;
-        ESP_LOGI(TAG, "Completed %d requests", ++request_count);
-
-        for(int countdown = 15; countdown >= 0; countdown--) {
-            ESP_LOGI(TAG, "%d...", countdown);
-            vTaskDelay(1000 / portTICK_PERIOD_MS);
-        }
-        ESP_LOGI(TAG, "Starting again!");
     }
+
+cleanup:
+    esp_tls_conn_destroy(tls);
+exit:
+    for (int countdown = 10; countdown >= 0; countdown--) {
+        ESP_LOGI(TAG, "%d...", countdown);
+        vTaskDelay(10000 / portTICK_PERIOD_MS);
+    }
+    
 }
 
 

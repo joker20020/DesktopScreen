@@ -275,6 +275,8 @@ static esp_err_t _http_time_event_handle(esp_http_client_event_t *evt)
             }
             output_len = 0;
             break;
+        case HTTP_EVENT_REDIRECT:
+            break;
     }
     return ESP_OK;
 }
@@ -349,6 +351,8 @@ static esp_err_t _http_weather_event_handle(esp_http_client_event_t *evt)
             }
             output_len = 0;
             break;
+        case HTTP_EVENT_REDIRECT:
+            break;
     }
     return ESP_OK;
 }
@@ -415,6 +419,8 @@ static esp_err_t _http_fans_event_handle(esp_http_client_event_t *evt)
             // }
             // output_len = 0;
             break;
+        case HTTP_EVENT_REDIRECT:
+            break;
     }
     return ESP_OK;
 }
@@ -447,6 +453,8 @@ static esp_err_t _http_city_event_handle(esp_http_client_event_t *evt)
         case HTTP_EVENT_ON_FINISH:
             ESP_LOGI(TAG, "HTTP_EVENT_ON_FINISH");
             break;
+        case HTTP_EVENT_REDIRECT:
+            break;
     }
     return ESP_OK;
 }
@@ -468,7 +476,7 @@ void http_time_get(){
 
 	if(err == ESP_OK)
 	{
-		ESP_LOGI(TAG, "Status = %d, content_length = %d",
+		ESP_LOGI(TAG, "Status = %d, content_length = %lld",
 				esp_http_client_get_status_code(time_client),//状态码
 				esp_http_client_get_content_length(time_client));//数据长度
 	}
@@ -506,7 +514,7 @@ void http_weather_get(){
 
 	if(err == ESP_OK)
 	{
-		ESP_LOGI(TAG, "Status = %d, content_length = %d",
+		ESP_LOGI(TAG, "Status = %d, content_length = %lld",
 				esp_http_client_get_status_code(weather_client),//状态码
 				esp_http_client_get_content_length(weather_client));//数据长度
 	}
@@ -540,7 +548,7 @@ void http_fans_get(){
 
 	if(err == ESP_OK)
 	{
-		ESP_LOGI(TAG, "Status = %d, content_length = %d",
+		ESP_LOGI(TAG, "Status = %d, content_length = %lld",
 				esp_http_client_get_status_code(fans_client),//状态码
 				esp_http_client_get_content_length(fans_client));//数据长度
 	}
@@ -561,7 +569,7 @@ void http_city_get(){
 
 	if(err == ESP_OK)
 	{
-		ESP_LOGI(TAG, "Status = %d, content_length = %ld",
+		ESP_LOGI(TAG, "Status = %d, content_length = %lld",
 				esp_http_client_get_status_code(city_client),//状态码
 				esp_http_client_get_content_length(city_client));//数据长度
 	}
