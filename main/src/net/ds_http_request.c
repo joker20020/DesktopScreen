@@ -38,7 +38,7 @@ static const char *TAG = "HTTP_CLIENT";
 
 int fans_type = 0;
 
-xQueueHandle http_request_event_queue;
+QueueHandle_t http_request_event_queue;
 
 /*
 {
@@ -561,7 +561,7 @@ void http_city_get(){
 
 	if(err == ESP_OK)
 	{
-		ESP_LOGI(TAG, "Status = %d, content_length = %d",
+		ESP_LOGI(TAG, "Status = %d, content_length = %ld",
 				esp_http_client_get_status_code(city_client),//状态码
 				esp_http_client_get_content_length(city_client));//数据长度
 	}

@@ -1,5 +1,6 @@
 #include "freertos/FreeRTOS.h"
 #include "esp_wifi.h"
+#include "esp_mac.h"
 #include "esp_system.h"
 #include "esp_event.h"
 #include "esp_log.h"
@@ -19,13 +20,13 @@
 esp_netif_t *sta;
 esp_netif_t *ap;
 
-xQueueHandle wifi_event_queue;
+QueueHandle_t wifi_event_queue;
 
 static void wifi_event_handler(void* arg, esp_event_base_t event_base,
                                     int32_t event_id, void* event_data)
 {
     static int s_retry_num = 0;
-    ESP_LOGI(TAG, "event_base = %s event_id = %d",event_base,event_id);
+    ESP_LOGI(TAG, "event_base = %s event_id = %ld",event_base,event_id);
     //STA event
     if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
         esp_wifi_connect();

@@ -3,5 +3,10 @@
     "files.associations": {
         "sdkconfig.h": "c",
         "ds_screen.h": "c"
-    }
+    },
+    "workbench.colorTheme": "Visual Studio Dark - C++",
+    "workbench.preferredDarkColorTheme": "Visual Studio Dark - C++",
+    "workbench.preferredLightColorTheme": "Visual Studio Light - C++",
+    "terminal.integrated.defaultProfile.linux": null,
+    "terminal.integrated.drawBoldTextInBrightColors": true
 }
