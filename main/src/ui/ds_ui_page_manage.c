@@ -22,7 +22,7 @@ typedef struct
 	PAGE_TYPE_E action;
 }UI_EVENT_T;
 
-xQueueHandle ui_event_queue;
+QueueHandle_t ui_event_queue;
 
 //TP点击事件
 void ds_ui_page_manage_send_event(TP_ACTION_E key,uint8_t touch_x,uint8_t touch_y){

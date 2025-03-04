@@ -24,8 +24,6 @@ idf_component_register(
 
                                 "src/fs/ds_spiffs.c"
 
-                                "src/ds_system_data.c"
-
                                 "src/data/ds_data_weather.c"
                                 "src/data/ds_data_num.c"
                                 "src/data/ds_data_icon.c"
@@ -33,6 +31,17 @@ idf_component_register(
 
                                 "src/draw/ds_font.c"
                                 "src/draw/ds_paint.c"
+
+                                "src/ui/ds_ui_timepage.c"
+                                "src/ui/ds_ui_page_manage.c"
+                                "src/ui/ds_ui_mainpage.c"
+                                "src/ui/ds_ui_weatherpage.c"
+                                "src/ui/ds_ui_wordpage.c"
+                                "src/ui/ds_ui_tomatopage.c"
+                                "src/ui/ds_ui_fans.c"
+
+                                "src/ds_system_data.c"
+
 
                         INCLUDE_DIRS 
                                 "."
