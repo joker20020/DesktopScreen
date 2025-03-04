@@ -13,7 +13,7 @@
 */
 #include <stdio.h>
 #include <string.h>
-#include "driver/i2c.h"
+#include "driver/i2c_master.h"
 #include "esp_log.h"
 #include "sdkconfig.h"
 #include "ds_i2c.h"
@@ -84,7 +84,9 @@ void i2c_master_write_slave(uint8_t u8Cmd, uint8_t *data_wr, size_t size)
     uint8_t data[size + 1] = {};
     memcpy(data, &u8Cmd, 1);
     memcpy(data + 1, data_wr, size);
-
+    // for(int i=0; i<size+1;i++){
+    //     ESP_LOGI("i2c", "i2c tans %#x", data[i]);
+    // }
     ESP_ERROR_CHECK(i2c_master_transmit(dev_handle, data, size + 1, -1));
 }
 

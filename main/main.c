@@ -208,6 +208,14 @@ void app_main(void)
     //看门狗初始化
     // esp_task_wdt_init(TWDT_TIMEOUT_S, false);
     // esp_task_wdt_add(NULL);
+    esp_task_wdt_config_t twdt_config = {
+        .timeout_ms = TWDT_TIMEOUT_S * 1000,
+        .idle_core_mask = (1 << CONFIG_FREERTOS_NUMBER_OF_CORES) - 1,    // Bitmask of all cores
+        .trigger_panic = false,
+    };
+    // ESP_ERROR_CHECK(esp_task_wdt_init(&twdt_config));
+    ESP_ERROR_CHECK(esp_task_wdt_add(NULL));
+    ESP_ERROR_CHECK(esp_task_wdt_status(NULL));
     //系统相关数据初始化
     ds_system_data_init();
     ESP_ERROR_CHECK(nvs_flash_init());
