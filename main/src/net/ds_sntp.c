@@ -19,12 +19,14 @@
 #include "esp_sleep.h"
 #include "nvs_flash.h"
 #include "esp_sntp.h"
+#include "esp_netif.h"
 #include "esp_netif_sntp.h"
+
+#include "ds_sntp.h"
 #include "ds_system_data.h"
 
 static const char *TAG = "ds_sntp";
 
-bool sntp_1st_init = true;
 
 void get_system_time()
 {
@@ -54,19 +56,33 @@ void time_sync_notification_cb(struct timeval *tv)
     get_system_time();
 }
 
-void initialize_sntp(void)
+void ds_init_sntp(void)
 {
-    ESP_LOGI(TAG, "Initializing SNTP");
-    if (sntp_1st_init) // doing this again?
-    {
-        esp_sntp_setoperatingmode(SNTP_OPMODE_POLL);
-        esp_sntp_setservername(0, "pool.ntp.org");
-        sntp_set_time_sync_notification_cb(time_sync_notification_cb);
-        esp_sntp_init();
-        sntp_1st_init = false;
-    }else{
-        ESP_LOGI(TAG, "Syncing System Time");
+    ESP_ERROR_CHECK(esp_netif_init());
+    ESP_LOGI(TAG, "Initializing and starting SNTP");
+    #if CONFIG_LWIP_SNTP_MAX_SERVERS > 1
+        /* This demonstrates configuring more than one server
+         */
+        esp_sntp_config_t config = ESP_NETIF_SNTP_DEFAULT_CONFIG_MULTIPLE(2,
+                                   ESP_SNTP_SERVER_LIST(CONFIG_SNTP_TIME_SERVER, "pool.ntp.org" ) );
+    #else
+        /*
+         * This is the basic default config with one server and starting the service
+         */
+        esp_sntp_config_t config = ESP_NETIF_SNTP_DEFAULT_CONFIG(CONFIG_SNTP_TIME_SERVER);
+    #endif
+        config.sync_cb = time_sync_notification_cb;     // Note: This is only needed if we want
+    #ifdef CONFIG_SNTP_TIME_SYNC_METHOD_SMOOTH
+        config.smooth_sync = true;
+    #endif
+    
+        esp_netif_sntp_init(&config);
+        int retry = 0;
+        const int retry_count = 15;
+        while (esp_netif_sntp_sync_wait(2000 / portTICK_PERIOD_MS) == ESP_ERR_TIMEOUT && ++retry < retry_count) {
+            ESP_LOGI(TAG, "Waiting for system time to be set... (%d/%d)", retry, retry_count);
+        }
+    
         esp_netif_sntp_deinit();
-        esp_sntp_init();
-    }
 }
+

@@ -440,7 +440,7 @@ static esp_err_t send_wifi_handler(httpd_req_t *req)
     ds_nvs_save_wifi_info(ssid,psw);
     print_system_data_wifi_info();
     ds_wifi_send_event(AP_STA_UPDATE);
-    send_beep_event(BEEP_SHORT_500MS);
+    // send_beep_event(BEEP_SHORT_500MS);
     cJSON_Delete(root);
     httpd_resp_sendstr(req, "Post control value successfully");
     return ESP_OK;
@@ -480,7 +480,7 @@ static esp_err_t send_tomato_handler(httpd_req_t *req)
     char *rest_time = cJSON_GetObjectItem(root, "rest_time")->valuestring;
     char *time_count = cJSON_GetObjectItem(root, "time_count")->valuestring;
     set_system_data_tomato_info(work_time,rest_time,time_count);
-    send_beep_event(BEEP_SHORT_500MS);
+    // send_beep_event(BEEP_SHORT_500MS);
     cJSON_Delete(root);
     httpd_resp_sendstr(req, "Post control value successfully");
     return ESP_OK;
@@ -518,7 +518,7 @@ static esp_err_t send_city_handler(httpd_req_t *req)
 
     char *city = cJSON_GetObjectItem(root, "city")->valuestring;
     set_system_data_city_info(city);
-    send_beep_event(BEEP_SHORT_500MS);
+    // send_beep_event(BEEP_SHORT_500MS);
     cJSON_Delete(root);
     httpd_resp_sendstr(req, "Post control value successfully");
 
@@ -548,7 +548,7 @@ static esp_err_t send_back_handler(httpd_req_t *req)
     buf[total_len] = '\0';
     printf("\r\n send_back_handler!\r\n");
     httpd_resp_sendstr(req, "Post control back successfully");
-    send_beep_event(BEEP_SHORT_500MS);
+    // send_beep_event(BEEP_SHORT_500MS);
     ds_ui_page_manage_send_action(PAGE_TYPE_MEMU);
     return ESP_OK;
 }

@@ -202,14 +202,14 @@ void ds_ui_tomatopage_updatetime(){
                     g_tomato_page.second = 59;
                 }
             }else{
-                send_beep_event(BEEP_LONG);
+                // send_beep_event(BEEP_LONG);
                 //TODO finish
                 g_tomato_page.work_status = TOMATO_COUNT_FINISH;
             }
             //每轮刷新
             if(ds_ui_get_now_show_page() == PAGE_TYPE_TOMATO){
                 g_tomato_page.partial_update_time = 0;
-                send_beep_event(BEEP_LONG);
+                // send_beep_event(BEEP_LONG);
                 ds_ui_tomatopage_show_init();
                 return;
             }

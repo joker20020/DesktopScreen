@@ -52,7 +52,7 @@ static bool IRAM_ATTR timer_group0_isr(gptimer_handle_t timer, const gptimer_ala
     BaseType_t high_task_awoken = pdFALSE;
     // /* Prepare basic event data
     //    that will be then sent back to the main program task */
-    timer_event_t evt;
+    timer_event_t evt={};
 
     // timer_group_clr_intr_status_in_isr(TIMER_GROUP_0, TIMER_0);
 
@@ -61,9 +61,8 @@ static bool IRAM_ATTR timer_group0_isr(gptimer_handle_t timer, const gptimer_ala
     // timer_group_enable_alarm_in_isr(TIMER_GROUP_0, timer_idx);
 
     /* Now just send the event data back to the main program task */
-    g_timer_event.timer_second_count ++;
-    //1s计算一次 
-    update_system_time_second();
+
+    
     xQueueSendFromISR(timer_queue, &evt, NULL);
     xQueueSendFromISR(ui_update_timer_queue, &evt, NULL);
     // return whether we need to yield at the end of ISR
@@ -144,6 +143,7 @@ static void ui_timer_update_task(void *arg)
         //1s计算一次 
         if(g_timer_event.timer_second_count >= 100){
             g_timer_event.timer_second_count = 0;
+            update_system_time_second();
             ds_ui_tomatopage_updatetime();
         }
     }

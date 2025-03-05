@@ -139,7 +139,7 @@ static void background_task(void* arg)
         //首次更新
         if(has_first_time_httpdata_request() == true && get_wifi_sta_status() == WIFI_STA_MODE_CONNECT_SUCCESS){
             ds_http_request_all();
-            initialize_sntp();
+            ds_init_sntp();
             set_has_first_time_httpdata_request();
         }
         //下拉请求更新
@@ -147,7 +147,7 @@ static void background_task(void* arg)
             if(get_is_ap_sta_open()){
                 if(get_wifi_sta_status() == WIFI_STA_MODE_CONNECT_SUCCESS){
                     ds_http_request_all();
-                    initialize_sntp();
+                    ds_init_sntp();
                     set_update_httpdata_request(false);
                 }
             }else{
@@ -261,8 +261,6 @@ void app_main(void)
     ds_wifi_send_event(AP_STA_START);
     xTaskCreate(background_task, "background_task", 4096, NULL, 10, NULL); 
 
-    //时间同步
-    initialize_sntp();
     
     //进入低功耗模式
     sleep_mode_init();

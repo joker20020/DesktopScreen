@@ -1,6 +1,6 @@
 #ifndef _DS_SNTP_H_
 #define _DS_SNTP_H_
 
-void initialize_sntp(void);
+void ds_init_sntp(void);
 
 #endif

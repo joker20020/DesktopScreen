@@ -445,6 +445,15 @@ CONFIG_I2C_MASTER_FREQUENCY=100000
 #
 # CONFIG_LCD_OVERCLOCK is not set
 # end of SPI Master
+
+#
+# SNTP
+#
+CONFIG_SNTP_TIME_SERVER="pool.ntp.org"
+CONFIG_SNTP_TIME_SYNC_METHOD_IMMED=y
+# CONFIG_SNTP_TIME_SYNC_METHOD_SMOOTH is not set
+# CONFIG_SNTP_TIME_SYNC_METHOD_CUSTOM is not set
+# end of SNTP
 # end of DesktopScreen Configuration
 
 #
