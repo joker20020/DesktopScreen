@@ -100,9 +100,9 @@ static void count_position_ft6336(TP_POSITION_T *position){
 				gTPS.x[1]=gTPS.x[1]*152/200; 
 				gTPS.y[1]=gTPS.y[1]*152/200;	
 				/******调试使用****/
-				printf("触摸点个数：:%d\r\n",gTPS.touch_count);	//FT6336U最多支持两点触控
-				printf("x0:%d,y0:%d\r\n",gTPS.x[0],gTPS.y[0]);
-				printf("x1:%d,y1:%d\r\n",gTPS.x[1],gTPS.y[1]);
+				// printf("触摸点个数：:%d\r\n",gTPS.touch_count);	//FT6336U最多支持两点触控
+				// printf("x0:%d,y0:%d\r\n",gTPS.x[0],gTPS.y[0]);
+				// printf("x1:%d,y1:%d\r\n",gTPS.x[1],gTPS.y[1]);
 			}
 			break;					
 		default:
@@ -154,7 +154,7 @@ void init_ft6336(){
     w_data=0;
 	//设置为正常操作模式
 	i2c_master_write_slave(FT_DEVIDE_MODE,&w_data,1);	    
- 	w_data=22;								
+ 	w_data=15;								
 	//设置触摸有效值22 越小越灵敏
  	i2c_master_write_slave(FT_ID_G_THGROUP,&w_data,1);	    
 	i2c_master_read_slave(FT_ID_G_THGROUP,&r_data,1);

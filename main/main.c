@@ -260,6 +260,9 @@ void app_main(void)
     vTaskDelay(2000 / portTICK_PERIOD_MS);
     ds_wifi_send_event(AP_STA_START);
     xTaskCreate(background_task, "background_task", 4096, NULL, 10, NULL); 
+
+    //时间同步
+    initialize_sntp();
     
     //进入低功耗模式
     sleep_mode_init();

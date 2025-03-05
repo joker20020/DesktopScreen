@@ -19,7 +19,7 @@
 #include "ds_ui_timepage.h"
 #include "ds_ui_tomatopage.h"
 
-#define TIMER_ALARM_SEC   (1) // sample test interval for the first timer
+#define TIMER_ALARM_SEC   (0.01) // sample test interval for the first timer
 #define TEST_WITH_RELOAD      1        // testing will be done with auto reload
 
 /*
