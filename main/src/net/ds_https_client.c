@@ -197,7 +197,7 @@ esp_err_t _https_weather_event_handler(esp_http_client_event_t *evt)
 
 static void https_weather_get(void)
 {
-    char count_url[130];
+    char count_url[150]={0};
     char *city = ds_nvs_read_city();
     //判断是否有存储城市信息
     if(city != NULL){
@@ -505,7 +505,7 @@ esp_err_t _https_sport_event_handler(esp_http_client_event_t *evt)
 
 static void https_sport_get(void)
 {
-    char count_url[130];
+    char count_url[130]={0};
     char *city = ds_nvs_read_city();
     //判断是否有存储城市信息
     if(city != NULL){

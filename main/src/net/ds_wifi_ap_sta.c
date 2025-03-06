@@ -101,7 +101,7 @@ static void ds_wifi_ap_sta_start(void)
             .channel = 11,
             .password = CONFIG_ESP_AP_WIFI_PASSWORD,
             .max_connection = CONFIG_ESP_AP_MAX_STA_CONN,
-            .authmode = WIFI_AUTH_OPEN
+            .authmode = WIFI_AUTH_WPA_WPA2_PSK
         },
     };
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &sta_config));

@@ -484,7 +484,7 @@ void http_time_get(){
 }
 
 void http_weather_get(){
-    char count_url[130];
+    char count_url[130]={0};
     char *city = ds_nvs_read_city();
     //判断是否有存储城市信息
     if(city != NULL){
