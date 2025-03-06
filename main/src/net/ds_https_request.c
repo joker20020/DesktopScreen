@@ -211,6 +211,5 @@ exit:
 
 void ds_https_request_init(void)
 {
-
     xTaskCreate(&https_get_task, "https_get_task", 8192, NULL, 5, NULL);
 }

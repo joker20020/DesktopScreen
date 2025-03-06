@@ -97,6 +97,10 @@ typedef struct
 
     uint8_t tomato_left_time;
 
+    // 温湿度相关
+    uint8_t temperature;
+    uint8_t humidity;
+
 }SYSTRM_DATA_T;
 
 ////////////////////SYSTEM DATA////////////////////////////////
@@ -145,6 +149,10 @@ uint32_t get_tp_wackup_timeleft();
 void update_system_time(uint8_t hour,uint8_t minute,uint8_t second);
 void update_system_time_second();
 void update_system_time_minute();
+
+//////////////TEMPERATURE AND HUMIDITY/////////////////////////////
+void set_system_temperature(uint8_t temperature);
+void set_system_humidity(uint8_t humidity);
 
 #endif
 

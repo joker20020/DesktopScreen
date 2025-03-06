@@ -29,7 +29,7 @@
 #include "ds_http_request.h"
 
 #include "ds_ui_timepage.h"
-#include "ds_ui_fans.h"
+// #include "ds_ui_fans.h"
 #include "ds_ui_weatherpage.h"
 #include "ds_nvs.h"
 #include "ds_system_data.h"

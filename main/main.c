@@ -35,8 +35,9 @@
 #include "ds_wifi_sta.h"
 #include "ds_system_data.h"
 #include "ds_nvs.h"
-#include "ds_https_request.h"
-#include "ds_http_request.h"
+// #include "ds_https_request.h"
+#include "ds_https_client.h"
+// #include "ds_http_request.h"
 #include "ds_timer.h"
 #include "ds_spiffs.h"
 #include "ds_ui_timepage.h"
@@ -44,7 +45,7 @@
 #include "ds_ui_weatherpage.h"
 #include "ds_ui_wordpage.h"
 #include "ds_ui_tomatopage.h"
-#include "ds_ui_fans.h"
+// #include "ds_ui_fans.h"
 #include "ds_font.h"
 #include "ds_paint.h"
 #include "ds_wifi_ap_sta.h"
@@ -138,7 +139,8 @@ static void background_task(void* arg)
         vTaskDelay(1000 / portTICK_PERIOD_MS);
         //首次更新
         if(has_first_time_httpdata_request() == true && get_wifi_sta_status() == WIFI_STA_MODE_CONNECT_SUCCESS){
-            ds_http_request_all();
+            // ds_http_request_all();
+            ds_https_request_all();
             ds_init_sntp();
             set_has_first_time_httpdata_request();
         }
@@ -146,7 +148,8 @@ static void background_task(void* arg)
         if(has_update_httpdata_request() == true){
             if(get_is_ap_sta_open()){
                 if(get_wifi_sta_status() == WIFI_STA_MODE_CONNECT_SUCCESS){
-                    ds_http_request_all();
+                    // ds_http_request_all();
+                    ds_https_request_all();
                     ds_init_sntp();
                     set_update_httpdata_request(false);
                 }
@@ -223,7 +226,8 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_event_loop_create_default());
 
     //http请求初始化
-    ds_http_request_init();
+    // ds_http_request_init();
+    ds_https_request_init();
     ds_http_server_init();
     //ap&sta模式初始化
     ds_wifi_ap_sta_init();   
@@ -238,7 +242,7 @@ void app_main(void)
     ds_ui_wordpage_init();
     ds_ui_wordpage_init();
     ds_ui_tomatopage_init();
-    ds_ui_fans_init();
+    // ds_ui_fans_init();
     //定时器初始化
     ds_timer_init();
     //PWM蜂鸣器初始化

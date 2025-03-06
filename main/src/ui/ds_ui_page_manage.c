@@ -7,7 +7,7 @@
 #include "ds_ui_weatherpage.h"
 #include "ds_ui_tomatopage.h"
 #include "ds_http_request.h"
-#include "ds_ui_fans.h"
+// #include "ds_ui_fans.h"
 #include "ds_pwm.h"
 
 static const char *TAG = "DS_UI_PAGE_MANAGE";
@@ -102,12 +102,12 @@ static void ui_page_evt_task(void *arg)
 				set_update_httpdata_request(true);
 			}
 		}else if(g_page_manage.now_show_page != PAGE_TYPE_MEMU){
-			if(g_page_manage.now_show_page == PAGE_TYPE_FANS){
-				if(evt.key == TP_ACTION_MOVE_LEFT){
-					g_page_manage.now_show_page = PAGE_TYPE_FANS;
-					ds_ui_fans_show_init(1);
-				}
-			}else if(g_page_manage.now_show_page == PAGE_TYPE_WORD){
+			// if(g_page_manage.now_show_page == PAGE_TYPE_FANS){
+			// 	if(evt.key == TP_ACTION_MOVE_LEFT){
+			// 		g_page_manage.now_show_page = PAGE_TYPE_FANS;
+			// 		ds_ui_fans_show_init(1);
+			// 	}
+			if(g_page_manage.now_show_page == PAGE_TYPE_WORD){
 				if(evt.key == TP_ACTION_MOVE_LEFT){
 					g_page_manage.now_show_page = PAGE_TYPE_WORD;
 					ds_ui_wordpage_show(1);

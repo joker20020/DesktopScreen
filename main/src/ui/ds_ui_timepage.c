@@ -102,6 +102,7 @@ void ds_ui_timepage_show_time_init(){
     num_size_y = 24;
     horizontal = 70 + offset_h;
     //溫度 十位
+    g_time_page.temperature = get_system_data().temperature;
     now_index = g_time_page.temperature / 10;
     ds_screen_partial_data_add(horizontal,horizontal+num_size,vertical,vertical+num_size_y,gImage_num_size24[now_index]);
     //溫度 个位
@@ -113,6 +114,7 @@ void ds_ui_timepage_show_time_init(){
     num_size = 16;
     horizontal = 70 + offset_h;
     //溫度 十位
+    g_time_page.humidity = get_system_data().humidity;
     now_index = g_time_page.humidity / 10;
     ds_screen_partial_data_add(horizontal,horizontal+num_size,vertical,vertical+num_size_y,gImage_num_size24[now_index]);
     //溫度 个位

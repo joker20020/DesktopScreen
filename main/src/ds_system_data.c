@@ -20,6 +20,8 @@ void ds_system_data_init(){
     g_system_data.has_wifi_info = false;
     g_system_data.hour = 10;
     g_system_data.minute = 10;
+    g_system_data.temperature = 0;
+    g_system_data.humidity = 0;
 }
 
 SYSTRM_DATA_T get_system_data(){
@@ -296,4 +298,12 @@ void update_system_time_minute(){
             g_system_data.hour ++;
     }else
         g_system_data.minute ++;
+}
+
+void set_system_temperature(uint8_t temperature){
+    g_system_data.temperature = temperature;
+}
+
+void set_system_humidity(uint8_t humidity){
+    g_system_data.humidity = humidity;
 }

@@ -4,10 +4,11 @@ idf_component_register(
 
                                 "src/net/ds_wifi_scan.c"
                                 "src/net/ds_wifi_ap.c"
-                                "src/net/ds_https_request.c"
+                                # "src/net/ds_https_request.c"
+                                "src/net/ds_https_client.c"
                                 "src/net/ds_http_server.c"
                                 "src/net/ds_wifi_sta.c"
-                                "src/net/ds_http_request.c"
+                                # "src/net/ds_http_request.c"
                                 "src/net/ds_wifi_ap_sta.c"
                                 "src/net/ds_dns_server.c"
                                 "src/net/ds_sntp.c"
@@ -38,7 +39,7 @@ idf_component_register(
                                 "src/ui/ds_ui_weatherpage.c"
                                 "src/ui/ds_ui_wordpage.c"
                                 "src/ui/ds_ui_tomatopage.c"
-                                "src/ui/ds_ui_fans.c"
+                                # "src/ui/ds_ui_fans.c"
 
                                 "src/ds_system_data.c"
 
