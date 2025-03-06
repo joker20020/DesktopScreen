@@ -43,7 +43,8 @@
 #include "ds_ui_timepage.h"
 #include "ds_ui_page_manage.h"
 #include "ds_ui_weatherpage.h"
-#include "ds_ui_wordpage.h"
+// #include "ds_ui_wordpage.h"
+#include "ds_ui_qrpage.h"
 #include "ds_ui_tomatopage.h"
 // #include "ds_ui_fans.h"
 #include "ds_font.h"
@@ -239,8 +240,7 @@ void app_main(void)
     ds_ui_timepage_init();
     ds_ui_page_manage_init();
     ds_ui_weather_init();
-    ds_ui_wordpage_init();
-    ds_ui_wordpage_init();
+    // ds_ui_wordpage_init();
     ds_ui_tomatopage_init();
     // ds_ui_fans_init();
     //定时器初始化

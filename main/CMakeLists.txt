@@ -37,7 +37,8 @@ idf_component_register(
                                 "src/ui/ds_ui_page_manage.c"
                                 "src/ui/ds_ui_mainpage.c"
                                 "src/ui/ds_ui_weatherpage.c"
-                                "src/ui/ds_ui_wordpage.c"
+                                # "src/ui/ds_ui_wordpage.c"
+                                "src/ui/ds_ui_qrpage.c"
                                 "src/ui/ds_ui_tomatopage.c"
                                 # "src/ui/ds_ui_fans.c"
 
@@ -62,6 +63,5 @@ idf_component_register(
                                 
                         EMBED_TXTFILES
                                 "server_root_cert.pem"
-                                "server_root_cert_bilibili.pem"
-                                
+                                # "server_root_cert_bilibili.pem"
                         )

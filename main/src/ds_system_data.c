@@ -307,3 +307,7 @@ void set_system_temperature(uint8_t temperature){
 void set_system_humidity(uint8_t humidity){
     g_system_data.humidity = humidity;
 }
+
+void set_system_sport(char *sport){
+    strcpy(g_system_data.sport, sport);
+}

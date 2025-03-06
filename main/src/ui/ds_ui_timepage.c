@@ -23,6 +23,7 @@ typedef struct
     uint8_t temperature; 
     uint8_t humidity;
     uint8_t updateing;
+    char sport[10];
 
     //局部刷新次数
     uint8_t partial_update_time;
@@ -110,16 +111,16 @@ void ds_ui_timepage_show_time_init(){
     ds_screen_partial_data_add(horizontal+num_size,horizontal+2*num_size,vertical,vertical+num_size_y,gImage_num_size24[now_index]);
 
     //湿度
-    vertical = 125 + offset_v;
-    num_size = 16;
-    horizontal = 70 + offset_h;
-    //溫度 十位
-    g_time_page.humidity = get_system_data().humidity;
-    now_index = g_time_page.humidity / 10;
-    ds_screen_partial_data_add(horizontal,horizontal+num_size,vertical,vertical+num_size_y,gImage_num_size24[now_index]);
-    //溫度 个位
-    now_index = g_time_page.humidity % 10;
-    ds_screen_partial_data_add(horizontal+num_size,horizontal+2*num_size,vertical,vertical+num_size_y,gImage_num_size24[now_index]);
+    // vertical = 125 + offset_v;
+    // num_size = 16;
+    // horizontal = 70 + offset_h;
+    //湿度 十位
+    // g_time_page.humidity = get_system_data().humidity;
+    // now_index = g_time_page.humidity / 10;
+    // ds_screen_partial_data_add(horizontal,horizontal+num_size,vertical,vertical+num_size_y,gImage_num_size24[now_index]);
+    //湿度 个位
+    // now_index = g_time_page.humidity % 10;
+    // ds_screen_partial_data_add(horizontal+num_size,horizontal+2*num_size,vertical,vertical+num_size_y,gImage_num_size24[now_index]);
 
     //温度符号
     //size 36*36
@@ -129,8 +130,26 @@ void ds_ui_timepage_show_time_init(){
     ds_screen_partial_data_add(horizontal,horizontal+num_size,vertical,vertical+num_size,gImage_template);
 
     //湿度符号
-    vertical = 115 + offset_v;
-    ds_screen_partial_data_add(horizontal,horizontal+num_size,vertical,vertical+num_size,gImage_humidity);
+    // vertical = 115 + offset_v;
+    // ds_screen_partial_data_add(horizontal,horizontal+num_size,vertical,vertical+num_size,gImage_humidity);
+
+
+    // 运动
+    strcpy(g_time_page.sport, get_system_data().sport);
+    vertical = 125 + offset_v;
+    int num_size_v = 28;
+    int num_size_h = 100;
+    horizontal = 70 + offset_h;
+    if(strcmp(g_time_page.sport, "较不宜") == 0){
+        ds_screen_partial_data_add(horizontal,horizontal+num_size_h,vertical,vertical+num_size_v,gImage_sport1);
+    }
+    else if(strcmp(g_time_page.sport, "较适宜") == 0){
+        ds_screen_partial_data_add(horizontal,horizontal+num_size_h,vertical,vertical+num_size_v,gImage_sport2);
+    }
+    else if(strcmp(g_time_page.sport, "适宜") == 0){
+        ds_screen_partial_data_add(horizontal,horizontal+num_size_h,vertical,vertical+num_size_v,gImage_sport3);
+    }
+    
 
     ds_screen_partial_data_copy();
 

@@ -101,6 +101,9 @@ typedef struct
     uint8_t temperature;
     uint8_t humidity;
 
+    // 运动相关
+    char sport[10];
+
 }SYSTRM_DATA_T;
 
 ////////////////////SYSTEM DATA////////////////////////////////
@@ -153,6 +156,8 @@ void update_system_time_minute();
 //////////////TEMPERATURE AND HUMIDITY/////////////////////////////
 void set_system_temperature(uint8_t temperature);
 void set_system_humidity(uint8_t humidity);
+
+void set_system_sport(char *sport);
 
 #endif
 

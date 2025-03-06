@@ -2,7 +2,8 @@
 #include "ds_ui_page_manage.h"
 #include "ds_ui_mainpage.h"
 #include "ds_ui_timepage.h"
-#include "ds_ui_wordpage.h"
+// #include "ds_ui_wordpage.h"
+#include "ds_ui_qrpage.h"
 #include "ds_screen.h"
 #include "ds_ui_weatherpage.h"
 #include "ds_ui_tomatopage.h"
@@ -37,7 +38,9 @@ void ds_ui_page_manage_send_event(TP_ACTION_E key,uint8_t touch_x,uint8_t touch_
 				evt.action = PAGE_TYPE_TIME;
 			}else{
 				//单词
-				evt.action = PAGE_TYPE_WORD;
+				// evt.action = PAGE_TYPE_WORD;
+				// QRcode
+				evt.action = PAGE_TYPE_QRCODE;
 			}
 		}else{
 			if(evt.touch_y < 75){
@@ -80,9 +83,13 @@ static void ui_page_evt_task(void *arg)
 				if(evt.action == PAGE_TYPE_TIME){
 					g_page_manage.now_show_page = PAGE_TYPE_TIME;
 					ds_ui_timepage_show_time_init();
-				}else if(evt.action == PAGE_TYPE_WORD){
-					g_page_manage.now_show_page = PAGE_TYPE_WORD;
-					ds_ui_wordpage_show(0);
+				// }else if(evt.action == PAGE_TYPE_WORD){
+				// 	g_page_manage.now_show_page = PAGE_TYPE_WORD;
+				// 	ds_ui_wordpage_show(0);
+				}else if(evt.action == PAGE_TYPE_QRCODE){
+					g_page_manage.now_show_page = PAGE_TYPE_QRCODE;
+					// ds_ui_wordpage_show(0);
+					ds_ui_qrcode_show();
 				}else if(evt.action == PAGE_TYPE_WEATHER){
 					g_page_manage.now_show_page = PAGE_TYPE_WEATHER;
 					ds_ui_weather_show(0);
@@ -107,12 +114,12 @@ static void ui_page_evt_task(void *arg)
 			// 		g_page_manage.now_show_page = PAGE_TYPE_FANS;
 			// 		ds_ui_fans_show_init(1);
 			// 	}
-			if(g_page_manage.now_show_page == PAGE_TYPE_WORD){
-				if(evt.key == TP_ACTION_MOVE_LEFT){
-					g_page_manage.now_show_page = PAGE_TYPE_WORD;
-					ds_ui_wordpage_show(1);
-				}
-			}else if(g_page_manage.now_show_page == PAGE_TYPE_TOMATO){
+			// if(g_page_manage.now_show_page == PAGE_TYPE_WORD){
+			// 	if(evt.key == TP_ACTION_MOVE_LEFT){
+			// 		g_page_manage.now_show_page = PAGE_TYPE_WORD;
+			// 		ds_ui_wordpage_show(1);
+			// 	}
+			if(g_page_manage.now_show_page == PAGE_TYPE_TOMATO){
 				if(evt.key == TP_ACTION_SHORT){
 					ds_ui_tomatopage_start_toggle();
 				}

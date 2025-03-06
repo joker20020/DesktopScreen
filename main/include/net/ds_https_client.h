@@ -22,7 +22,7 @@
 
 typedef enum{
     HTTPS_GET_WEATHER,
-    HTTPS_GET_TEMPRATURE,
+    HTTPS_GET_SPORT,
 }HTTPS_REQUEST_TYPE_E;
 
 typedef struct 
@@ -32,11 +32,16 @@ typedef struct
     char weather_code[2];
     char temperature[3];
     char humidity[3];
+    char sport[10];
 }weather_info;
 
 void cjson_weather_info(char *text);
 esp_err_t _https_weather_event_handler(esp_http_client_event_t *evt);
 static void https_weather_get(void);
+
+void cjson_sport_info(char *text);
+esp_err_t _https_sport_event_handler(esp_http_client_event_t *evt);
+static void https_sport_get(void);
 
 static void https_request_task(void *pvParameters);
 void ds_https_request_type(HTTPS_REQUEST_TYPE_E type);

@@ -28,11 +28,14 @@ extern const unsigned char gImage_set[];
 extern const unsigned char gImage_template[];
 //湿度符号
 extern const unsigned char gImage_humidity[];
-//粉丝
-extern const unsigned char gImage_fans[];
+//不宜运动
+extern const unsigned char gImage_sport1[];
+//较宜运动
+extern const unsigned char gImage_sport2[];
+//宜运动
+extern const unsigned char gImage_sport3[];
 
 extern int icon_back_len;
-extern int icon_fans_len;
 extern int icon_template_len;
 
 #endif
